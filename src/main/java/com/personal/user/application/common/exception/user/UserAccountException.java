@@ -1,6 +1,6 @@
-package com.personal.user.exception.user;
+package com.personal.user.application.common.exception.user;
 
-import com.personal.user.api.StatusCode;
+import com.personal.user.application.common.api.StatusCode;
 import lombok.Getter;
 
 @Getter

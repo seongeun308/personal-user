@@ -1,4 +1,4 @@
-package com.personal.user.repository;
+package com.personal.user.application.repository;
 
 import com.personal.user.core.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
 }

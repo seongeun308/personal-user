@@ -1,12 +1,12 @@
-package com.personal.user.service;
+package com.personal.user.application.service;
 
-import com.personal.user.converter.UserConverter;
+import com.personal.user.application.common.converter.UserConverter;
 import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
-import com.personal.user.dto.request.SignUpRequest;
-import com.personal.user.api.StatusCode;
-import com.personal.user.exception.user.UserAccountException;
-import com.personal.user.repository.UserRepository;
+import com.personal.user.application.dto.request.SignUpRequest;
+import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.exception.user.UserAccountException;
+import com.personal.user.application.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;

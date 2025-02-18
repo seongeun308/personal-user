@@ -1,8 +1,8 @@
-package com.personal.user.exception;
+package com.personal.user.application.common.exception;
 
-import com.personal.user.api.Api;
-import com.personal.user.api.StatusCode;
-import com.personal.user.exception.user.UserAccountException;
+import com.personal.user.application.common.api.Api;
+import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.exception.user.UserAccountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 

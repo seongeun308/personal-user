@@ -1,4 +1,4 @@
-package com.personal.user.api;
+package com.personal.user.application.common.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

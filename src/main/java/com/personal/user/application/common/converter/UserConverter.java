@@ -1,7 +1,7 @@
-package com.personal.user.converter;
+package com.personal.user.application.common.converter;
 
 import com.personal.user.core.domain.User;
-import com.personal.user.dto.request.SignUpRequest;
+import com.personal.user.application.dto.request.SignUpRequest;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,6 +1,6 @@
-package com.personal.user.exception;
+package com.personal.user.application.common.exception;
 
-import com.personal.user.api.Api;
+import com.personal.user.application.common.api.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
