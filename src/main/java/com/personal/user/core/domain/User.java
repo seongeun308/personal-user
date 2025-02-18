@@ -3,6 +3,8 @@ package com.personal.user.core.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @ToString
@@ -15,4 +17,6 @@ public class User {
     private Long userId;
     private String email;
     private String password;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
+
