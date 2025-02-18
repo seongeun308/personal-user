@@ -17,8 +17,12 @@ public class UserExceptionHandler {
     public ResponseEntity<Api<Void>> handleUserException(UserAccountException e) {
         StatusCode statusCode = e.getStatusCode();
 
+        Api<Void> api = Api.error(statusCode, null);
+
+        log.error("{}", api);
+
         return ResponseEntity.status(statusCode.getCode())
-                .body(Api.error(statusCode, null));
+                .body(api);
     }
 
 }
