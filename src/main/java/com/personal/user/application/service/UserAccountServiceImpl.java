@@ -30,9 +30,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public void duplicateEmail(String email) {
-        userRepository.findByEmail(email)
-                .ifPresent(user -> {
-                    throw new UserAccountException(StatusCode.EMAIL_CONFLICT);
-                });
+        if (userRepository.existsByEmail(email))
+            throw new UserAccountException(StatusCode.EMAIL_CONFLICT);
     }
 }

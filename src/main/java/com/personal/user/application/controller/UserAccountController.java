@@ -32,9 +32,9 @@ public class UserAccountController {
         return Api.ok(StatusCode.CREATED, signUpResponse);
     }
 
+    @Duplication
     @PostMapping("/duple-email")
     public Api<String> duplicateEmail(@RequestBody String email) {
-        userAccountService.duplicateEmail(email);
         return Api.ok(StatusCode.OK, email);
     }
 }
