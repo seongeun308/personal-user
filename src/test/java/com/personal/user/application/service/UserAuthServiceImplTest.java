@@ -2,10 +2,9 @@ package com.personal.user.application.service;
 
 import com.personal.user.application.common.api.StatusCode;
 import com.personal.user.application.common.exception.user.UserAuthException;
-import com.personal.user.application.common.util.JwtTokenUtil;
+import com.personal.user.application.dto.Token;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.request.SignUpRequest;
-import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.core.service.UserAuthService;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class UserAuthServiceImplTest {
     @Autowired
     private UserAccountService userAccountService;
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenService jwtTokenService;
 
     @Test
     void 로그인_성공() {
@@ -33,9 +32,10 @@ class UserAuthServiceImplTest {
         Long userId = userAccountService.signUp(signUpRequest);
 
         LoginRequest loginRequest = new LoginRequest("test@test.com", "test1122!");
-        String token = userAuthService.login(loginRequest);
+        Token token = userAuthService.login(loginRequest);
 
-        assertThat(userId).isEqualTo(jwtTokenUtil.getUserIdFromToken(token));
+        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(token.getAccessToken()));
+        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(token.getRefreshToken()));
     }
 
     @Test

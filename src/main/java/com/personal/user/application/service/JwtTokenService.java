@@ -1,24 +1,33 @@
-package com.personal.user.application.common.util;
+package com.personal.user.application.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Objects;
 
-@Component
-public class JwtTokenUtil {
+@Service
+public class JwtTokenService {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    public String generateToken(Long userId) {
+    public String generateAccessToken(Long userId) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 만료 시간 1시간 후
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 만료 15분 후
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
+    }
+
+    public String generateRefreshToken(Long userId) {
+        return Jwts.builder()
+                .subject(String.valueOf(userId))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 만료 시간 7일 후
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .compact();
     }
@@ -33,8 +42,8 @@ public class JwtTokenUtil {
     }
 
     public boolean validateToken(String token, Long userId) {
-        Long extractedUsername = getUserIdFromToken(token);
-        return Objects.equals(extractedUsername, userId) && !isTokenExpired(token);
+        Long extractedUserId = getUserIdFromToken(token);
+        return Objects.equals(extractedUserId, userId) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

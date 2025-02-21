@@ -2,7 +2,7 @@ package com.personal.user.application.service;
 
 import com.personal.user.application.common.api.StatusCode;
 import com.personal.user.application.common.exception.user.UserAuthException;
-import com.personal.user.application.common.util.JwtTokenUtil;
+import com.personal.user.application.dto.Token;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.repository.UserRepository;
 import com.personal.user.core.domain.User;
@@ -16,13 +16,16 @@ import org.springframework.stereotype.Service;
 public class UserAuthServiceImpl implements UserAuthService {
 
     private final UserRepository userRepository;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenService jwtTokenService;
 
     @Override
-    public String login(LoginRequest loginRequest) {
+    public Token login(LoginRequest loginRequest) {
         User user = authenticate(loginRequest);
 
-        return jwtTokenUtil.generateToken(user.getUserId());
+        String accessToken = jwtTokenService.generateAccessToken(user.getUserId());
+        String refreshToken = jwtTokenService.generateRefreshToken(user.getUserId());
+
+        return new Token(accessToken, refreshToken);
     }
 
     private User authenticate(LoginRequest loginRequest) {
