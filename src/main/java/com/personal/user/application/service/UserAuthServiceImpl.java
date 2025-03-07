@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UserAuthServiceImpl implements UserAuthService {
@@ -19,13 +21,14 @@ public class UserAuthServiceImpl implements UserAuthService {
     private final JwtTokenService jwtTokenService;
 
     @Override
-    public Token login(LoginRequest loginRequest) {
+    public Map<String, Token> login(LoginRequest loginRequest) {
         User user = authenticate(loginRequest);
 
-        String accessToken = jwtTokenService.generateAccessToken(user.getUserId());
-        String refreshToken = jwtTokenService.generateRefreshToken(user.getUserId());
+        Token accessToken = jwtTokenService.generateAccessToken(user.getUserId());
+        Token refreshToken = jwtTokenService.generateRefreshToken(user.getUserId());
 
-        return new Token(accessToken, refreshToken);
+        return Map.of("accessToken", accessToken,
+                "refreshToken", refreshToken);
     }
 
     private User authenticate(LoginRequest loginRequest) {
