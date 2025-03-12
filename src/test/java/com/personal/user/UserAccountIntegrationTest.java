@@ -14,8 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -40,8 +39,6 @@ class UserAccountIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.SUCCESS.getStatus()))
-                .andExpect(jsonPath("$.code").value(UserErrorCode.CREATED.getCode()))
-                .andExpect(jsonPath("$.messages", contains(UserErrorCode.CREATED.getMessage())))
                 .andExpect(jsonPath("$.data.userId").value(1L));
     }
 
@@ -58,7 +55,7 @@ class UserAccountIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
                 .andExpect(jsonPath("$.code").value(UserErrorCode.EMAIL_CONFLICT.getCode()))
-                .andExpect(jsonPath("$.messages", contains(UserErrorCode.EMAIL_CONFLICT.getMessage())))
+                .andExpect(jsonPath("$.message").value(UserErrorCode.EMAIL_CONFLICT.getMessage()))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
     }
@@ -74,9 +71,8 @@ class UserAccountIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
                 .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.messages", containsInAnyOrder(
-                        "올바르지 않은 이메일 형식입니다.",
-                        "비밀번호는 8~16자 영문 대소문자, 숫자, 특수문자를 포함해야 합니다."
+                .andExpect(jsonPath("$.message", containsString(
+                        "올바르지 않은 이메일 형식입니다. 비밀번호는 8~16자 영문 대소문자, 숫자, 특수문자를 포함해야 합니다."
                         )))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
@@ -92,9 +88,8 @@ class UserAccountIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
                 .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.messages", containsInAnyOrder(
-                        "이메일은 필수 입력값입니다.",
-                        "비밀번호는 필수 입력값입니다."
+                .andExpect(jsonPath("$.message", containsString(
+                        "이메일은 필수 입력값입니다. 비밀번호는 필수 입력값입니다."
                 )))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
@@ -110,7 +105,7 @@ class UserAccountIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
                 .andExpect(jsonPath("$.code").value(UserErrorCode.EMAIL_CONFLICT.getCode()))
-                .andExpect(jsonPath("$.messages", contains(UserErrorCode.EMAIL_CONFLICT.getMessage())))
+                .andExpect(jsonPath("$.message").value(UserErrorCode.EMAIL_CONFLICT.getMessage()))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

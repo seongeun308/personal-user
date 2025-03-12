@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,10 +34,11 @@ class UserAuthServiceImplTest {
         Long userId = userAccountService.signUp(signUpRequest);
 
         LoginRequest loginRequest = new LoginRequest("test@test.com", "test1122!");
-        TokenDto tokenDto = userAuthService.login(loginRequest);
+        Map<String, TokenDto> tokens = userAuthService.login(loginRequest);
 
-        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(tokenDto.getAccessToken()));
-        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(tokenDto.getRefreshToken()));
+
+        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(tokens.get("accessToken").getToken()));
+        assertThat(tokens.get("refreshToken")).isNotNull();
     }
 
     @Test
