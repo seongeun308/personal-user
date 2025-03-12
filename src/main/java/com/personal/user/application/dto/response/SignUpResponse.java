@@ -7,5 +7,4 @@ import lombok.Data;
 @Builder
 public class SignUpResponse {
     private Long userId;
-    private String token;
 }

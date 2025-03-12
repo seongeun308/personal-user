@@ -9,23 +9,20 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserAccountController {
     private final UserAccountService userAccountService;
 
     @Duplication
-    @PostMapping
+    @PostMapping("/signup")
     public Api<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
         Long userId = userAccountService.signUp(signUpRequest);
 
         SignUpResponse signUpResponse = SignUpResponse.builder()
                 .userId(userId)
-                .token("")
                 .build();
 
         return Api.ok(signUpResponse);

@@ -1,11 +1,8 @@
 package com.personal.user.application.common.api;
 
 import com.personal.user.application.common.api.code.ErrorCode;
-import com.personal.user.application.common.api.code.UserErrorCode;
 import lombok.*;
 import org.springframework.http.HttpStatus;
-
-import java.util.List;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -43,6 +40,4 @@ public class Api<T> {
                 .data(data)
                 .build();
     }
-
-
 }

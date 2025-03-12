@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -72,17 +71,13 @@ public class JwtTokenService {
         return Long.valueOf(userId);
     }
 
-    public boolean validateToken(String token, Long userId) {
-        Long extractedUserId = getUserIdFromToken(token);
-        return Objects.equals(extractedUserId, userId) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
+    public void validateToken(String token) {
         Date expiration = getClaimsFromToken(token)
                 .getPayload()
                 .getExpiration();
 
-        return expiration.before(new Date());
+        if (expiration.before(new Date()))
+            throw new TokenException(TokenErrorCode.EXPIRED_TOKEN);
     }
 
     private void saveRefreshToken(Token token) {
