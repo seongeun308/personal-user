@@ -1,10 +1,9 @@
 package com.personal.user.service;
 
-import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.common.exception.user.UserAccountException;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.application.dto.request.SignUpRequest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +33,6 @@ class UserAccountServiceImplTest {
         UserAccountException e = assertThrows(UserAccountException.class, () ->
                 userAccountService.duplicateEmail("test@test.com"));
 
-        assertThat(e.getStatusCode()).isEqualTo(StatusCode.EMAIL_CONFLICT);
+        assertThat(e.getErrorCode()).isEqualTo(UserErrorCode.EMAIL_CONFLICT);
     }
 }

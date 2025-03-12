@@ -2,7 +2,7 @@ package com.personal.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.personal.user.application.common.api.Result;
-import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.dto.request.SignUpRequest;
 import com.personal.user.core.service.UserAccountService;
 import org.junit.jupiter.api.Test;
@@ -40,8 +40,8 @@ class UserAccountIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.SUCCESS.getStatus()))
-                .andExpect(jsonPath("$.code").value(StatusCode.CREATED.getCode()))
-                .andExpect(jsonPath("$.messages", contains(StatusCode.CREATED.getMessage())))
+                .andExpect(jsonPath("$.code").value(UserErrorCode.CREATED.getCode()))
+                .andExpect(jsonPath("$.messages", contains(UserErrorCode.CREATED.getMessage())))
                 .andExpect(jsonPath("$.data.userId").value(1L));
     }
 
@@ -57,8 +57,8 @@ class UserAccountIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
-                .andExpect(jsonPath("$.code").value(StatusCode.EMAIL_CONFLICT.getCode()))
-                .andExpect(jsonPath("$.messages", contains(StatusCode.EMAIL_CONFLICT.getMessage())))
+                .andExpect(jsonPath("$.code").value(UserErrorCode.EMAIL_CONFLICT.getCode()))
+                .andExpect(jsonPath("$.messages", contains(UserErrorCode.EMAIL_CONFLICT.getMessage())))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
     }
@@ -109,8 +109,8 @@ class UserAccountIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))
-                .andExpect(jsonPath("$.code").value(StatusCode.EMAIL_CONFLICT.getCode()))
-                .andExpect(jsonPath("$.messages", contains(StatusCode.EMAIL_CONFLICT.getMessage())))
+                .andExpect(jsonPath("$.code").value(UserErrorCode.EMAIL_CONFLICT.getCode()))
+                .andExpect(jsonPath("$.messages", contains(UserErrorCode.EMAIL_CONFLICT.getMessage())))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

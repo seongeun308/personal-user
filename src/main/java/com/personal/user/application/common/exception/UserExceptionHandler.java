@@ -1,7 +1,7 @@
 package com.personal.user.application.common.exception;
 
 import com.personal.user.application.common.api.Api;
-import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.common.exception.user.UserAccountException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(value = UserAccountException.class)
     public ResponseEntity<Api<Void>> handleUserException(UserAccountException e) {
-        StatusCode statusCode = e.getStatusCode();
+        UserErrorCode statusCode = e.getErrorCode();
 
         Api<Void> api = Api.error(statusCode, null);
 

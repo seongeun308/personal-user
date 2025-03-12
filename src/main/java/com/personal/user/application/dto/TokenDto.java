@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
 @AllArgsConstructor
-public class Token {
+public class TokenDto {
     private String token;
-    private ZonedDateTime expires;
+    private LocalDateTime expiredAt;
 }

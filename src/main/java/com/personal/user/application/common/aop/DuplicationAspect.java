@@ -1,9 +1,6 @@
 package com.personal.user.application.common.aop;
 
-import com.personal.user.application.common.api.StatusCode;
-import com.personal.user.application.common.exception.user.UserAccountException;
 import com.personal.user.application.dto.request.SignUpRequest;
-import com.personal.user.application.repository.UserRepository;
 import com.personal.user.core.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;

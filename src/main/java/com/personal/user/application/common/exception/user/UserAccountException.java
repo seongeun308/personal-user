@@ -1,14 +1,14 @@
 package com.personal.user.application.common.exception.user;
 
-import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import lombok.Getter;
 
 @Getter
 public class UserAccountException extends RuntimeException {
-    private final StatusCode statusCode;
+    private final UserErrorCode errorCode;
 
-    public UserAccountException(StatusCode statusCode) {
-        super(statusCode.getMessage());
-        this.statusCode = statusCode;
+    public UserAccountException(UserErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
 }

@@ -15,8 +15,20 @@ services:
     networks:
       - my-network
 
+  redis:
+    image: redis
+    container_name: redis-container
+    ports:
+      - "6379:6379"  # Redis 기본 포트 매핑
+    volumes:
+      - redis-data:/data  # Redis 데이터 지속성 유지
+    networks:
+      - my-network
+    restart: no
+
 volumes:
   mysql_data:
+  redis-data:
 
 networks:
   my-network:

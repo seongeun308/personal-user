@@ -9,7 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -17,11 +17,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Api<Void>> handleUserException(MethodArgumentNotValidException e) {
-        List<String> messages = e.getBindingResult().getFieldErrors().stream()
+        String message = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
+                .collect(Collectors.joining(" "));
 
-        Api<Void> api = Api.error(HttpStatus.BAD_REQUEST, messages, null);
+        Api<Void> api = Api.error(HttpStatus.BAD_REQUEST, message, null);
 
         log.error("{}", api);
 

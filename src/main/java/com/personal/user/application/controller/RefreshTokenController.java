@@ -1,36 +1,49 @@
 package com.personal.user.application.controller;
 
 import com.personal.user.application.common.api.Api;
+import com.personal.user.application.common.api.code.TokenErrorCode;
+import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.dto.TokenDto;
-import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.response.TokenResponse;
-import com.personal.user.core.service.UserAuthService;
-import jakarta.validation.Valid;
+import com.personal.user.application.service.JwtTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
-public class UserAuthController {
+public class RefreshTokenController {
 
-    private final UserAuthService userAuthService;
+    private final JwtTokenService jwtTokenService;
 
-    @PostMapping("/login")
-    public ResponseEntity<Api<TokenResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
-        Map<String, TokenDto> tokens = userAuthService.login(loginRequest);
-        TokenDto accessToken = tokens.get("accessToken");
-        TokenDto refreshToken = tokens.get("refreshToken");
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<Api<TokenResponse>> refreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null)
+            throw new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST);
 
-        ResponseCookie refreshTokenCookie = getRefreshTokenCookie(refreshToken);
+        String refreshToken = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("refreshToken"))
+                .findFirst()
+                .orElseThrow(() -> new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST))
+                .getValue();
+
+        Long userId = jwtTokenService.getUserIdFromToken(refreshToken);
+        jwtTokenService.checkRefreshToken(userId, refreshToken);
+
+        TokenDto accessToken = jwtTokenService.generateAccessToken(userId);
+        TokenDto newRefreshToken = jwtTokenService.generateRefreshToken(userId);
+
+        ResponseCookie refreshTokenCookie = getRefreshTokenCookie(newRefreshToken);
         TokenResponse tokenResponse = new TokenResponse(accessToken.getExpiredAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         return ResponseEntity.ok()

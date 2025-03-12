@@ -1,5 +1,7 @@
 package com.personal.user.application.common.api;
 
+import com.personal.user.application.common.api.code.ErrorCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -12,32 +14,32 @@ import java.util.List;
 public class Api<T> {
     private String result;
     private int code;
-    private List<String> messages;
+    private String message;
     private T data;
 
-    public static <T> Api<T> ok(StatusCode statusCode, T data) {
+    public static <T> Api<T> ok(T data) {
         return Api.<T>builder()
                 .result(Result.SUCCESS.getStatus())
-                .code(statusCode.getCode())
-                .messages(List.of(statusCode.getMessage()))
+                .code(HttpStatus.OK.value())
+                .message("성공")
                 .data(data)
                 .build();
     }
 
-    public static <T> Api<T> error(StatusCode statusCode, T data) {
+    public static <T> Api<T> error(ErrorCode errorCode, T data) {
         return Api.<T>builder()
                 .result(Result.FAIL.getStatus())
-                .code(statusCode.getCode())
-                .messages(List.of(statusCode.getMessage()))
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
                 .data(data)
                 .build();
     }
 
-    public static <T> Api<T> error(HttpStatus status, List<String> messages, T data) {
+    public static <T> Api<T> error(HttpStatus status, String message, T data) {
         return Api.<T>builder()
                 .result(Result.FAIL.getStatus())
                 .code(status.value())
-                .messages(messages)
+                .message(message)
                 .data(data)
                 .build();
     }

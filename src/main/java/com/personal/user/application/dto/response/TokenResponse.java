@@ -7,7 +7,6 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-public class LoginResponse {
-    private String accessExpires;
-    private String refreshExpires;
+public class TokenResponse {
+    private String expiredAt;   // accessToken
 }

@@ -2,7 +2,6 @@ package com.personal.user.application.controller;
 
 import com.personal.user.application.common.annotation.Duplication;
 import com.personal.user.application.common.api.Api;
-import com.personal.user.application.common.api.StatusCode;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.application.dto.request.SignUpRequest;
 import com.personal.user.application.dto.response.SignUpResponse;
@@ -29,12 +28,12 @@ public class UserAccountController {
                 .token("")
                 .build();
 
-        return Api.ok(StatusCode.CREATED, signUpResponse);
+        return Api.ok(signUpResponse);
     }
 
     @Duplication
     @PostMapping("/duple-email")
     public Api<String> duplicateEmail(@RequestBody String email) {
-        return Api.ok(StatusCode.OK, email);
+        return Api.ok(email);
     }
 }

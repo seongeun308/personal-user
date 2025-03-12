@@ -10,5 +10,5 @@ public enum Result {
     FAIL("실패")
     ;
 
-    private String status;
+    private final String status;
 }

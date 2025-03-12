@@ -1,8 +1,8 @@
 package com.personal.user.application.service;
 
-import com.personal.user.application.common.api.StatusCode;
+import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.common.exception.user.UserAuthException;
-import com.personal.user.application.dto.Token;
+import com.personal.user.application.dto.TokenDto;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.request.SignUpRequest;
 import com.personal.user.core.service.UserAccountService;
@@ -32,10 +32,10 @@ class UserAuthServiceImplTest {
         Long userId = userAccountService.signUp(signUpRequest);
 
         LoginRequest loginRequest = new LoginRequest("test@test.com", "test1122!");
-        Token token = userAuthService.login(loginRequest);
+        TokenDto tokenDto = userAuthService.login(loginRequest);
 
-        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(token.getAccessToken()));
-        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(token.getRefreshToken()));
+        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(tokenDto.getAccessToken()));
+        assertThat(userId).isEqualTo(jwtTokenService.getUserIdFromToken(tokenDto.getRefreshToken()));
     }
 
     @Test
@@ -47,6 +47,6 @@ class UserAuthServiceImplTest {
 
         UserAuthException e = assertThrows(UserAuthException.class, () -> userAuthService.login(loginRequest));
 
-        assertThat(e.getStatusCode()).isEqualTo(StatusCode.USER_NOT_FOUND);
+        assertThat(e.getErrorCode()).isEqualTo(UserErrorCode.USER_NOT_FOUND);
     }
 }
