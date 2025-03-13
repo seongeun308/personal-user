@@ -12,6 +12,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class RefreshToken {
     @Id
-    private String token;
     private Long userId;
+    private String token;
 }
