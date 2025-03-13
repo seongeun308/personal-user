@@ -1,38 +1,23 @@
 package com.personal.user.application.common.config;
 
-import com.personal.user.core.domain.Token;
+import com.personal.user.application.model.RefreshToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.SerializationException;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @Configuration
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<Long, Token> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<Long, Token> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, RefreshToken> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, RefreshToken> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
 
-        redisTemplate.setKeySerializer(new RedisSerializer<Long>() {
-            @Override
-            public byte[] serialize(Long aLong) throws SerializationException {
-                return String.valueOf(aLong).getBytes();
-            }
-
-            @Override
-            public Long deserialize(byte[] bytes) throws SerializationException {
-                return Long.valueOf(new String(bytes));
-            }
-        });
-
-        Jackson2JsonRedisSerializer<Token> valueSerializer = new Jackson2JsonRedisSerializer<>(Token.class);
+        Jackson2JsonRedisSerializer<RefreshToken> valueSerializer = new Jackson2JsonRedisSerializer<>(RefreshToken.class);
         redisTemplate.setValueSerializer(valueSerializer);
 
         return redisTemplate;

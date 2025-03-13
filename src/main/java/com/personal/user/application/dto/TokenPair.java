@@ -4,12 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @ToString
 @AllArgsConstructor
-public class TokenDto {
-    private String token;
-    private String expiresAt;
+public class TokenPair {
+    private final TokenDto accessToken;
+    private final TokenDto refreshToken;
 }

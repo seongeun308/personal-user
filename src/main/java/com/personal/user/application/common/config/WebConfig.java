@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/login",
             "/signup",
             "/duple-email",
-            "/auth/refresh"
+            "/reissue"
     );
 
     @Override

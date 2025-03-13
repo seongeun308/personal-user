@@ -1,10 +1,16 @@
 package com.personal.user.application.controller;
 
 import com.personal.user.application.common.api.Api;
+import com.personal.user.application.common.api.code.TokenErrorCode;
+import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.dto.TokenDto;
+import com.personal.user.application.dto.TokenPair;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.response.TokenResponse;
+import com.personal.user.application.service.TokenService;
 import com.personal.user.core.service.UserAuthService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -15,36 +21,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
 public class UserAuthController {
 
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     private final UserAuthService userAuthService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<Api<TokenResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
-        Map<String, TokenDto> tokens = userAuthService.login(loginRequest);
-        TokenDto accessToken = tokens.get("accessToken");
-        TokenDto refreshToken = tokens.get("refreshToken");
+        TokenPair tokenPair = userAuthService.login(loginRequest);
+        return assembleTokenResponse(tokenPair);
+    }
 
-        ResponseCookie refreshTokenCookie = getRefreshTokenCookie(refreshToken);
-        TokenResponse tokenResponse = new TokenResponse(accessToken.getExpiredAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    @PostMapping("/reissue")
+    public ResponseEntity<Api<TokenResponse>> refreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null)
+            throw new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST);
+        
+        String refreshToken = getTokenFromCookie(cookies);
+        TokenPair tokenPair = tokenService.reissueToken(refreshToken);
 
+        return assembleTokenResponse(tokenPair);
+    }
+
+    private static ResponseEntity<Api<TokenResponse>> assembleTokenResponse(TokenPair tokenPair) {
+        ResponseCookie refreshTokenCookie = createCookieWithToken(tokenPair.getRefreshToken());
+        TokenResponse tokenResponse = new TokenResponse(tokenPair.getAccessToken().getExpiresAt());
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + accessToken.getToken())
+                .header("Authorization", "Bearer " + tokenPair.getAccessToken().getToken())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(Api.ok(tokenResponse));
     }
 
-    private static ResponseCookie getRefreshTokenCookie(TokenDto refreshToken) {
-        return ResponseCookie.from("refreshToken", refreshToken.getToken())
+    private static String getTokenFromCookie(Cookie[] cookies) {
+        return Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals(REFRESH_TOKEN_COOKIE_NAME))
+                .findFirst()
+                .orElseThrow(() -> new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST))
+                .getValue();
+    }
+
+    private static ResponseCookie createCookieWithToken(TokenDto refreshToken) {
+        return ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken())
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
-                .path("/auth/refresh")
+                .path("/reissue")
                 .maxAge(Duration.ofDays(7))
                 .build();
     }

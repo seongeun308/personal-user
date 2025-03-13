@@ -34,7 +34,7 @@ class UserAccountIntegrationTest {
     void 회원가입_성공하면_200() throws Exception {
         String content = objectMapper.writeValueAsString(new SignUpRequest("test@test.com", "test1122!"));
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/signup")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -49,7 +49,7 @@ class UserAccountIntegrationTest {
 
         String content = objectMapper.writeValueAsString(signUpRequest);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/signup")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -65,7 +65,7 @@ class UserAccountIntegrationTest {
         SignUpRequest wrongSignUpRequest = new SignUpRequest("testtest.com", "test");
         String wrongContent = objectMapper.writeValueAsString(wrongSignUpRequest);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/signup")
                         .content(wrongContent)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -82,7 +82,7 @@ class UserAccountIntegrationTest {
         SignUpRequest nullSignUpRequest = new SignUpRequest(null, null);
         String nullContent = objectMapper.writeValueAsString(nullSignUpRequest);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/signup")
                         .content(nullContent)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -99,7 +99,7 @@ class UserAccountIntegrationTest {
         SignUpRequest signUpRequest = new SignUpRequest("test@test.com", "test1122!");
         userAccountService.signUp(signUpRequest);
 
-        mockMvc.perform(post("/user/duple-email")
+        mockMvc.perform(post("/duple-email")
                         .content(signUpRequest.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

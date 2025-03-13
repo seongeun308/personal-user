@@ -1,4 +1,4 @@
-package com.personal.user.core.domain;
+package com.personal.user.application.model;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,8 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Token {
+public class RefreshToken {
     @Id
-    private Long userId;
     private String token;
-    private String expiredAt;
-    private String createdAt;
+    private Long userId;
 }

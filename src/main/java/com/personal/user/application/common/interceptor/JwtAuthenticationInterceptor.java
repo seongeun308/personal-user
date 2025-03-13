@@ -3,7 +3,7 @@ package com.personal.user.application.common.interceptor;
 import com.personal.user.application.common.api.code.TokenErrorCode;
 import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.repository.UserRepository;
-import com.personal.user.application.service.JwtTokenService;
+import com.personal.user.application.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
     private static final String HEADER_STRING = "Authorization";
     private static final String PREFIX = "Bearer ";
-    private final JwtTokenService jwtTokenService;
+    private final TokenService tokenService;
     private final UserRepository userRepository;
 
     @Override
@@ -26,9 +26,9 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
         if (accessToken == null)
             throw new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST);
 
-        jwtTokenService.validateToken(accessToken);
+        tokenService.validateAccessToken(accessToken);
 
-        Long userId = jwtTokenService.getUserIdFromToken(accessToken);
+        Long userId = tokenService.getUserIdFromAccessToken(accessToken);
         if (!userRepository.existsById(userId))
             throw new TokenException(TokenErrorCode.INVALID_TOKEN_VALUE);
 
