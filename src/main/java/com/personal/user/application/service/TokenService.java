@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
@@ -65,11 +66,17 @@ public class TokenService {
     }
 
     public void revokeToken(String accessToken) {
+        validateAccessToken(accessToken);
+
         Date expiration = getExpirationFromAccessToken(accessToken);
-        tokenBlacklistService.addToBlacklist(accessToken, toSeconds(expiration.toInstant()));
+        tokenBlacklistService.addToBlacklist(accessToken, toSeconds(toLocalDateTime(expiration)));
 
         Long userId = getUserIdFromAccessToken(accessToken);
         refreshTokenRepository.deleteById(userId);
+    }
+
+    private LocalDateTime toLocalDateTime(Date expiration) {
+        return expiration.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     public void validateAccessToken(String accessToken) {
@@ -101,7 +108,7 @@ public class TokenService {
         }
     }
 
-    private long toSeconds(Temporal expiration) {
+    private long toSeconds(LocalDateTime expiration) {
         return Duration.between(LocalDateTime.now(), expiration).getSeconds();
     }
 }

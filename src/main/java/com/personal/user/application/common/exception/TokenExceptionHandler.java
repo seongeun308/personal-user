@@ -16,7 +16,7 @@ public class TokenExceptionHandler {
     public ResponseEntity<Api<Void>> handleTokenException(final TokenException e) {
         TokenErrorCode errorCode = e.getErrorCode();
 
-        Api<Void> api = Api.error(errorCode, null);
+        Api<Void> api = Api.error(errorCode);
 
         log.error("{}", api);
 

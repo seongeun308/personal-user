@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(" "));
 
-        Api<Void> api = Api.error(HttpStatus.BAD_REQUEST, message, null);
+        Api<Void> api = Api.error(HttpStatus.BAD_REQUEST, message);
 
         log.error("{}", api);
 

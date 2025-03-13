@@ -32,12 +32,19 @@ public class Api<T> {
                 .build();
     }
 
-    public static <T> Api<T> error(HttpStatus status, String message, T data) {
+    public static <T> Api<T> error(ErrorCode errorCode) {
+        return Api.<T>builder()
+                .result(Result.FAIL.getStatus())
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    public static <T> Api<T> error(HttpStatus status, String message) {
         return Api.<T>builder()
                 .result(Result.FAIL.getStatus())
                 .code(status.value())
                 .message(message)
-                .data(data)
                 .build();
     }
 }

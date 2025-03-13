@@ -28,6 +28,8 @@ import java.util.Arrays;
 public class UserAuthController {
 
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+    private static final String HEADER_STRING = "Authorization";
+    private static final String PREFIX = "Bearer ";
     private final UserAuthService userAuthService;
     private final TokenService tokenService;
 
@@ -49,7 +51,24 @@ public class UserAuthController {
         return assembleTokenResponse(tokenPair);
     }
 
-    private static ResponseEntity<Api<TokenResponse>> assembleTokenResponse(TokenPair tokenPair) {
+    @PostMapping("/logout")
+    public Api<Void> logout(HttpServletRequest request) {
+        String accessToken = extractAccessToken(request);
+        try {
+            tokenService.revokeToken(accessToken);
+        } catch (TokenException | IllegalArgumentException ignored) {}
+
+        return Api.ok(null);
+    }
+
+    private String extractAccessToken(HttpServletRequest request) {
+        String header = request.getHeader(HEADER_STRING);
+        if (header != null && header.startsWith(PREFIX))
+            return header.substring(PREFIX.length());
+        return null;
+    }
+
+    private ResponseEntity<Api<TokenResponse>> assembleTokenResponse(TokenPair tokenPair) {
         ResponseCookie refreshTokenCookie = createCookieWithToken(tokenPair.getRefreshToken());
         TokenResponse tokenResponse = new TokenResponse(tokenPair.getAccessToken().getExpiresAt());
         return ResponseEntity.ok()
@@ -58,7 +77,7 @@ public class UserAuthController {
                 .body(Api.ok(tokenResponse));
     }
 
-    private static String getTokenFromCookie(Cookie[] cookies) {
+    private String getTokenFromCookie(Cookie[] cookies) {
         return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(REFRESH_TOKEN_COOKIE_NAME))
                 .findFirst()
@@ -66,7 +85,7 @@ public class UserAuthController {
                 .getValue();
     }
 
-    private static ResponseCookie createCookieWithToken(TokenDto refreshToken) {
+    private ResponseCookie createCookieWithToken(TokenDto refreshToken) {
         return ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken())
                 .httpOnly(true)
                 .secure(true)
