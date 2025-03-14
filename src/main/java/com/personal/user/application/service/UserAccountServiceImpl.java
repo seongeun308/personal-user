@@ -1,6 +1,7 @@
 package com.personal.user.application.service;
 
 import com.personal.user.application.common.converter.UserConverter;
+import com.personal.user.application.common.exception.user.AccountDeleteException;
 import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.application.dto.request.SignUpRequest;
@@ -32,5 +33,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void duplicateEmail(String email) {
         if (userRepository.existsByEmail(email))
             throw new UserAccountException(UserErrorCode.EMAIL_CONFLICT);
+    }
+
+    @Override
+    public void unregister(String email) {
+        try {
+            userRepository.deleteByEmail(email);
+        } catch (Exception e) {
+            throw new AccountDeleteException(UserErrorCode.UNEXPECT_ERROR);
+        }
+
+        log.info("Deleted user account :{}", email);
     }
 }
