@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
     private static final List<String> WHITE_LIST = List.of(
             "/login",
-            "/signup",
+            "/register",
             "/duple-email",
             "/reissue",
             "/logout"

@@ -3,7 +3,7 @@ package com.personal.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.personal.user.application.common.api.Result;
 import com.personal.user.application.common.api.code.UserErrorCode;
-import com.personal.user.application.dto.request.SignUpRequest;
+import com.personal.user.application.dto.request.RegisterRequest;
 import com.personal.user.core.service.UserAccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,9 @@ class UserAccountIntegrationTest {
 
     @Test
     void 회원가입_성공하면_200() throws Exception {
-        String content = objectMapper.writeValueAsString(new SignUpRequest("test@test.com", "test1122!"));
+        String content = objectMapper.writeValueAsString(new RegisterRequest("test@test.com", "test1122!"));
 
-        mockMvc.perform(post("/signup")
+        mockMvc.perform(post("/register")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -44,12 +44,12 @@ class UserAccountIntegrationTest {
 
     @Test
     void 회원가입_이메일_중복_시_409() throws Exception {
-        SignUpRequest signUpRequest = new SignUpRequest("test@test.com", "test1122!");
-        userAccountService.signUp(signUpRequest);
+        RegisterRequest registerRequest = new RegisterRequest("test@test.com", "test1122!");
+        userAccountService.addUser(registerRequest);
 
-        String content = objectMapper.writeValueAsString(signUpRequest);
+        String content = objectMapper.writeValueAsString(registerRequest);
 
-        mockMvc.perform(post("/signup")
+        mockMvc.perform(post("/register")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -62,10 +62,10 @@ class UserAccountIntegrationTest {
 
     @Test
     void 회원가입_올바르지_않은_형식으로_실패_시_400() throws Exception {
-        SignUpRequest wrongSignUpRequest = new SignUpRequest("testtest.com", "test");
-        String wrongContent = objectMapper.writeValueAsString(wrongSignUpRequest);
+        RegisterRequest wrongRegisterRequest = new RegisterRequest("testtest.com", "test");
+        String wrongContent = objectMapper.writeValueAsString(wrongRegisterRequest);
 
-        mockMvc.perform(post("/signup")
+        mockMvc.perform(post("/register")
                         .content(wrongContent)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -78,10 +78,10 @@ class UserAccountIntegrationTest {
 
     @Test
     void 회원가입_필수_값_누락_시_400() throws Exception {
-        SignUpRequest nullSignUpRequest = new SignUpRequest(null, null);
-        String nullContent = objectMapper.writeValueAsString(nullSignUpRequest);
+        RegisterRequest nullRegisterRequest = new RegisterRequest(null, null);
+        String nullContent = objectMapper.writeValueAsString(nullRegisterRequest);
 
-        mockMvc.perform(post("/signup")
+        mockMvc.perform(post("/register")
                         .content(nullContent)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -94,11 +94,11 @@ class UserAccountIntegrationTest {
 
     @Test
     void 이메일_중복_시_409() throws Exception {
-        SignUpRequest signUpRequest = new SignUpRequest("test@test.com", "test1122!");
-        userAccountService.signUp(signUpRequest);
+        RegisterRequest registerRequest = new RegisterRequest("test@test.com", "test1122!");
+        userAccountService.addUser(registerRequest);
 
         mockMvc.perform(post("/duple-email")
-                        .content(signUpRequest.getEmail())
+                        .content(registerRequest.getEmail())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.result").value(Result.FAIL.getStatus()))

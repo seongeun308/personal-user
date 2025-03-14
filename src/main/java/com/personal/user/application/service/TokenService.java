@@ -37,8 +37,6 @@ public class TokenService {
     }
 
     public TokenPair reissueToken(String refreshToken) {
-        validateRefreshToken(refreshToken);
-
         Long userId = getUserIdFromRefreshToken(refreshToken);
         return issueToken(userId);
     }
@@ -66,8 +64,6 @@ public class TokenService {
     }
 
     public void revokeToken(String accessToken) {
-        validateAccessToken(accessToken);
-
         Date expiration = getExpirationFromAccessToken(accessToken);
         tokenBlacklistService.addToBlacklist(accessToken, toSeconds(toLocalDateTime(expiration)));
 

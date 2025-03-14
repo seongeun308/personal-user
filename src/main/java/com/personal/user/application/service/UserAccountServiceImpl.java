@@ -2,9 +2,10 @@ package com.personal.user.application.service;
 
 import com.personal.user.application.common.converter.UserConverter;
 import com.personal.user.application.common.exception.user.AccountDeleteException;
+import com.personal.user.application.common.exception.user.UserAuthException;
 import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
-import com.personal.user.application.dto.request.SignUpRequest;
+import com.personal.user.application.dto.request.RegisterRequest;
 import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.common.exception.user.UserAccountException;
 import com.personal.user.application.repository.UserRepository;
@@ -20,7 +21,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserRepository userRepository;
 
     @Override
-    public Long signUp(SignUpRequest request) {
+    public Long addUser(RegisterRequest request) {
         String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
         User user = userRepository.save(UserConverter.toUser(request, encodedPassword));
 
@@ -36,13 +37,25 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void unregister(String email) {
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserAuthException(UserErrorCode.AUTHENTICATION_FAILED));
+    }
+
+    @Override
+    public User getUserByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserAuthException(UserErrorCode.AUTHENTICATION_FAILED));
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
         try {
-            userRepository.deleteByEmail(email);
+            userRepository.deleteById(userId);
         } catch (Exception e) {
             throw new AccountDeleteException(UserErrorCode.UNEXPECT_ERROR);
         }
 
-        log.info("Deleted user account :{}", email);
+        log.info("Deleted user account :{}", userId);
     }
 }

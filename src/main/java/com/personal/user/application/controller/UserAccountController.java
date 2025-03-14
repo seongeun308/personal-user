@@ -3,8 +3,8 @@ package com.personal.user.application.controller;
 import com.personal.user.application.common.annotation.Duplication;
 import com.personal.user.application.common.api.Api;
 import com.personal.user.core.service.UserAccountService;
-import com.personal.user.application.dto.request.SignUpRequest;
-import com.personal.user.application.dto.response.SignUpResponse;
+import com.personal.user.application.dto.request.RegisterRequest;
+import com.personal.user.application.dto.response.RegisterResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,15 +17,15 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
 
     @Duplication
-    @PostMapping("/signup")
-    public Api<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
-        Long userId = userAccountService.signUp(signUpRequest);
+    @PostMapping("/register")
+    public Api<RegisterResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {
+        Long userId = userAccountService.addUser(registerRequest);
 
-        SignUpResponse signUpResponse = SignUpResponse.builder()
+        RegisterResponse registerResponse = RegisterResponse.builder()
                 .userId(userId)
                 .build();
 
-        return Api.ok(signUpResponse);
+        return Api.ok(registerResponse);
     }
 
     @Duplication

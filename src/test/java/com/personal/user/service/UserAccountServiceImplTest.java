@@ -3,7 +3,7 @@ package com.personal.user.service;
 import com.personal.user.application.common.api.code.UserErrorCode;
 import com.personal.user.application.common.exception.user.UserAccountException;
 import com.personal.user.core.service.UserAccountService;
-import com.personal.user.application.dto.request.SignUpRequest;
+import com.personal.user.application.dto.request.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +21,14 @@ class UserAccountServiceImplTest {
 
     @Test
     void signUp() {
-        SignUpRequest signUpRequest = new SignUpRequest("test@test.com", "test");
-        userAccountService.signUp(signUpRequest);
+        RegisterRequest registerRequest = new RegisterRequest("test@test.com", "test");
+        userAccountService.addUser(registerRequest);
     }
 
     @Test
     void duplicateEmail() {
-        SignUpRequest signUpRequest = new SignUpRequest("test@test.com", "test");
-        userAccountService.signUp(signUpRequest);
+        RegisterRequest registerRequest = new RegisterRequest("test@test.com", "test");
+        userAccountService.addUser(registerRequest);
 
         UserAccountException e = assertThrows(UserAccountException.class, () ->
                 userAccountService.duplicateEmail("test@test.com"));

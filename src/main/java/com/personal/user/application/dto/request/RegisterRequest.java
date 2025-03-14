@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-public class SignUpRequest {
+public class RegisterRequest {
     @Email(message = "올바르지 않은 이메일 형식입니다.")
     @NotBlank(message = "이메일은 필수 입력값입니다.")
     private String email;

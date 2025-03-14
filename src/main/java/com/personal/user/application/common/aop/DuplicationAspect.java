@@ -1,6 +1,6 @@
 package com.personal.user.application.common.aop;
 
-import com.personal.user.application.dto.request.SignUpRequest;
+import com.personal.user.application.dto.request.RegisterRequest;
 import com.personal.user.core.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,7 +25,7 @@ public class DuplicationAspect {
                 checkEmailDuplication(email);
                 break;
             }
-            if (arg instanceof SignUpRequest request) {
+            if (arg instanceof RegisterRequest request) {
                 checkEmailDuplication(request.getEmail());
                 break;
             }

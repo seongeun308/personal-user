@@ -7,7 +7,6 @@ import com.personal.user.application.dto.TokenDto;
 import com.personal.user.application.dto.TokenPair;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.response.TokenResponse;
-import com.personal.user.application.service.TokenService;
 import com.personal.user.core.service.UserAuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +30,6 @@ public class UserAuthController {
     private static final String HEADER_STRING = "Authorization";
     private static final String PREFIX = "Bearer ";
     private final UserAuthService userAuthService;
-    private final TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<Api<TokenResponse>> login(@RequestBody @Valid LoginRequest loginRequest) {
@@ -40,13 +38,13 @@ public class UserAuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<Api<TokenResponse>> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<Api<TokenResponse>> reissue(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null)
             throw new TokenException(TokenErrorCode.TOKEN_DOES_NOT_EXIST);
         
         String refreshToken = getTokenFromCookie(cookies);
-        TokenPair tokenPair = tokenService.reissueToken(refreshToken);
+        TokenPair tokenPair = userAuthService.reissue(refreshToken);
 
         return assembleTokenResponse(tokenPair);
     }
@@ -54,11 +52,26 @@ public class UserAuthController {
     @PostMapping("/logout")
     public Api<Void> logout(HttpServletRequest request) {
         String accessToken = extractAccessToken(request);
-        try {
-            tokenService.revokeToken(accessToken);
-        } catch (TokenException | IllegalArgumentException ignored) {}
-
+        userAuthService.logout(accessToken);
         return Api.ok(null);
+    }
+
+    @PostMapping("/unregister")
+    public ResponseEntity<Api<Void>> unregister(HttpServletRequest request) {
+        String accessToken = extractAccessToken(request);
+        userAuthService.unregister(accessToken);
+
+        ResponseCookie expired = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/reissue")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, expired.toString())
+                .body(Api.ok(null));
     }
 
     private String extractAccessToken(HttpServletRequest request) {
