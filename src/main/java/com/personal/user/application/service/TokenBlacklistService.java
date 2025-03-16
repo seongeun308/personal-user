@@ -14,9 +14,9 @@ public class TokenBlacklistService {
 
     private final StringRedisTemplate redisTemplate;
 
-    public void addToBlacklist(String accessToken, long expirationInSec) {
+    public void addToBlacklist(String accessToken, Long userId, long expirationInSec) {
         redisTemplate.opsForValue()
-                .set("blacklist:" + accessToken, "", expirationInSec, TimeUnit.SECONDS);
+                .set("blacklist:" + accessToken, "userId:" + userId.toString(), expirationInSec, TimeUnit.SECONDS);
 
         log.info("Blacklist access token added: {}", accessToken);
     }

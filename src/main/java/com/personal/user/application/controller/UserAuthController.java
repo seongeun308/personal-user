@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 import java.util.Arrays;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserAuthController {
@@ -52,7 +54,11 @@ public class UserAuthController {
     @PostMapping("/logout")
     public Api<Void> logout(HttpServletRequest request) {
         String accessToken = extractAccessToken(request);
-        userAuthService.logout(accessToken);
+        try {
+            userAuthService.logout(accessToken);
+        } catch (TokenException | IllegalArgumentException e) {
+            log.info(e.getMessage());
+        }
         return Api.ok(null);
     }
 

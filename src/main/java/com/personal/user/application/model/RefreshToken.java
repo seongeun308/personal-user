@@ -1,17 +1,15 @@
 package com.personal.user.application.model;
 
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class RefreshToken {
     @Id
     private Long userId;
     private String token;
+    private String createdAt;
+    private String expireAt;
 }

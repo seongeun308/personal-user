@@ -1,15 +1,14 @@
 package com.personal.user.application.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
 @Getter
 @ToString
-@AllArgsConstructor
+@Builder
 public class TokenDto {
     private String token;
     private String expiresAt;
+    private String createdAt;
 }

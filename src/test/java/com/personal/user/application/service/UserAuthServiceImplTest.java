@@ -36,8 +36,8 @@ class UserAuthServiceImplTest {
 
         LoginRequest loginRequest = new LoginRequest("test@test.com", "test1122!");
 
-        TokenDto mockAccessToken = new TokenDto("testAT", "testATExp");
-        TokenDto mockRefreshToken = new TokenDto("testRT", "testRTExp");
+        TokenDto mockAccessToken = TokenDto.builder().token("testAT").expiresAt("testATExp").build();
+        TokenDto mockRefreshToken = TokenDto.builder().token("testRT").expiresAt("testRTExp").build();
         when(tokenService.issueToken(userId))
                 .thenReturn(new TokenPair(mockAccessToken, mockRefreshToken));
 

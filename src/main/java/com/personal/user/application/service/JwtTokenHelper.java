@@ -33,7 +33,10 @@ public class JwtTokenHelper {
                 .expiration(toDate(expiration))
                 .compact();
 
-        return new TokenDto(accessToken, expiration.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return TokenDto.builder()
+                .token(accessToken)
+                .expiresAt(expiration.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .build();
     }
 
     public TokenDto issueRefreshToken(Long userId) {
@@ -48,7 +51,11 @@ public class JwtTokenHelper {
                 .expiration(toDate(expiration))
                 .compact();
 
-        return new TokenDto(refreshToken, expiration.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return TokenDto.builder()
+                .token(refreshToken)
+                .createdAt(now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .expiresAt(expiration.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .build();
     }
 
     public Jws<Claims> getAccessTokenClaims(String accessToken) {

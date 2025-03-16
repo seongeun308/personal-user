@@ -1,6 +1,7 @@
 package com.personal.user.application.service;
 
 import com.personal.user.application.common.api.code.TokenErrorCode;
+import com.personal.user.application.common.converter.TokenConverter;
 import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.dto.TokenDto;
 import com.personal.user.application.dto.TokenPair;
@@ -31,7 +32,7 @@ public class TokenService {
         TokenDto accessToken = jwtTokenHelper.issueAccessToken(userId);
         TokenDto refreshToken = jwtTokenHelper.issueRefreshToken(userId);
 
-        refreshTokenRepository.save(new RefreshToken(userId, refreshToken.getToken()));
+        refreshTokenRepository.save(TokenConverter.toRefreshToken(userId, refreshToken));
 
         return new TokenPair(accessToken, refreshToken);
     }
@@ -64,10 +65,11 @@ public class TokenService {
     }
 
     public void revokeToken(String accessToken) {
-        Date expiration = getExpirationFromAccessToken(accessToken);
-        tokenBlacklistService.addToBlacklist(accessToken, toSeconds(toLocalDateTime(expiration)));
-
         Long userId = getUserIdFromAccessToken(accessToken);
+
+        Date expiration = getExpirationFromAccessToken(accessToken);
+        tokenBlacklistService.addToBlacklist(accessToken, userId, toSeconds(toLocalDateTime(expiration)));
+
         refreshTokenRepository.deleteById(userId);
     }
 

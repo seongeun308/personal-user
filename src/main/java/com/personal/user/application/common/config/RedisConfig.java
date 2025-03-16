@@ -9,6 +9,8 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 public class RedisConfig {
 
@@ -19,12 +21,18 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new RedisSerializer<Long>() {
             @Override
             public byte[] serialize(Long value) throws SerializationException {
-                return new byte[0];
+                if (value == null) {
+                    return null;
+                }
+                return value.toString().getBytes(StandardCharsets.UTF_8);
             }
 
             @Override
             public Long deserialize(byte[] bytes) throws SerializationException {
-                return 0L;
+                if (bytes == null || bytes.length == 0) {
+                    return null;
+                }
+                return Long.parseLong(new String(bytes, StandardCharsets.UTF_8));
             }
         });
 

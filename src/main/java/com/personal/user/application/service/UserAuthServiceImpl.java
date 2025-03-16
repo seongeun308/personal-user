@@ -28,10 +28,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public void logout(String accessToken) {
         tokenService.validateAccessToken(accessToken);
-
-        try {
-            tokenService.revokeToken(accessToken);
-        } catch (TokenException | IllegalArgumentException ignored) {}
+        tokenService.revokeToken(accessToken);
     }
 
     @Override
