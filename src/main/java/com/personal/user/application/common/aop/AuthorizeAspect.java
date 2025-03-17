@@ -9,18 +9,20 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Aspect
 @RequiredArgsConstructor
+@Component
 public class AuthorizeAspect {
 
     private static final String HEADER_STRING = "Authorization";
     private static final String PREFIX = "Bearer ";
     private final TokenService tokenService;
 
-    @Around("@annotation(com.personal.user.application.common.annotation.AdminOnly)")
+    @Around("@within(com.personal.user.application.common.annotation.AdminOnly)")
     public Object checkAdminRole(ProceedingJoinPoint joinPoint) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null)

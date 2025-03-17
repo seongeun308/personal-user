@@ -3,6 +3,7 @@ package com.personal.user.application.service;
 import com.personal.user.application.common.converter.UserConverter;
 import com.personal.user.application.common.exception.user.AccountDeleteException;
 import com.personal.user.application.common.exception.user.UserAuthException;
+import com.personal.user.core.domain.Role;
 import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.application.dto.request.RegisterRequest;
@@ -25,9 +26,21 @@ public class UserAccountServiceImpl implements UserAccountService {
         String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
         User user = userRepository.save(UserConverter.toUser(request, encodedPassword));
 
-        log.info("Sign up successful {}", user);
+        return user.getUserId();
+    }
+
+    @Override
+    public Long addUser(RegisterRequest request, Role role) {
+        String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+        User user = userRepository.save(UserConverter.toUser(request, encodedPassword, role));
 
         return user.getUserId();
+    }
+
+    @Override
+    public void updateUser(RegisterRequest request, Long userId) {
+        String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+        userRepository.save(UserConverter.toUser(request, encodedPassword, userId));
     }
 
     @Override

@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/register",
             "/duple-email",
             "/reissue",
-            "/logout"
+            "/logout",
+            "/admin"
     );
 
     @Override
