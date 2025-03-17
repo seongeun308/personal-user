@@ -2,7 +2,6 @@ package com.personal.user.core.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.redis.core.index.Indexed;
 
 @Entity
@@ -22,5 +21,6 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Role role = Role.USER;
 }

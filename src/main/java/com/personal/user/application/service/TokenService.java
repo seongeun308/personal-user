@@ -6,6 +6,7 @@ import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.dto.TokenDto;
 import com.personal.user.application.dto.TokenPair;
 import com.personal.user.application.model.RefreshToken;
+import com.personal.user.application.model.UserClaims;
 import com.personal.user.application.repository.RefreshTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,8 +30,8 @@ public class TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlacklistService tokenBlacklistService;
 
-    public TokenPair issueToken(Long userId) {
-        TokenDto accessToken = jwtTokenHelper.issueAccessToken(userId);
+    public TokenPair issueToken(Long userId, Map<String, Object> claims) {
+        TokenDto accessToken = jwtTokenHelper.issueAccessToken(userId, claims);
         TokenDto refreshToken = jwtTokenHelper.issueRefreshToken(userId);
 
         refreshTokenRepository.save(TokenConverter.toRefreshToken(userId, refreshToken));
@@ -37,9 +39,9 @@ public class TokenService {
         return new TokenPair(accessToken, refreshToken);
     }
 
-    public TokenPair reissueToken(String refreshToken) {
+    public TokenPair reissueToken(String refreshToken, Map<String, Object> claims) {
         Long userId = getUserIdFromRefreshToken(refreshToken);
-        return issueToken(userId);
+        return issueToken(userId, claims);
     }
 
     public Long getUserIdFromAccessToken(String accessToken) {
@@ -56,6 +58,12 @@ public class TokenService {
                 .getSubject();
 
         return Long.valueOf(userId);
+    }
+
+    public String getRoleFromAccessToken(String accessToken) {
+        return (String) jwtTokenHelper.getAccessTokenClaims(accessToken)
+                .getPayload()
+                .get(UserClaims.ROLE.getClaimName());
     }
 
     public Date getExpirationFromAccessToken(String accessToken) {

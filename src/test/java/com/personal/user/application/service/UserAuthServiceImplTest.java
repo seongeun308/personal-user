@@ -6,6 +6,8 @@ import com.personal.user.application.dto.TokenDto;
 import com.personal.user.application.dto.TokenPair;
 import com.personal.user.application.dto.request.LoginRequest;
 import com.personal.user.application.dto.request.RegisterRequest;
+import com.personal.user.application.model.UserClaims;
+import com.personal.user.core.domain.Role;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.core.service.UserAuthService;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +42,11 @@ class UserAuthServiceImplTest {
 
         TokenDto mockAccessToken = TokenDto.builder().token("testAT").expiresAt("testATExp").build();
         TokenDto mockRefreshToken = TokenDto.builder().token("testRT").expiresAt("testRTExp").build();
-        when(tokenService.issueToken(userId))
+        Map<String, Object> mockClaims = Map.of(
+                UserClaims.ROLE.getClaimName(), Role.USER
+        );
+
+        when(tokenService.issueToken(userId, mockClaims))
                 .thenReturn(new TokenPair(mockAccessToken, mockRefreshToken));
 
         TokenPair tokenPair = userAuthService.login(loginRequest);

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class JwtTokenHelper {
     private static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 15;
     private static final long REFRESH_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * 7;
 
-    public TokenDto issueAccessToken(Long userId) {
+    public TokenDto issueAccessToken(Long userId, Map<String, Object> claims) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusSeconds(ACCESS_TOKEN_VALIDITY_SECONDS);
 

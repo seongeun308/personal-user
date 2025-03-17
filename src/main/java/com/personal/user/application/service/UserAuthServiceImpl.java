@@ -5,12 +5,16 @@ import com.personal.user.application.common.exception.token.TokenException;
 import com.personal.user.application.common.exception.user.UserAuthException;
 import com.personal.user.application.dto.TokenPair;
 import com.personal.user.application.dto.request.LoginRequest;
+import com.personal.user.application.model.UserClaims;
+import com.personal.user.core.domain.Role;
 import com.personal.user.core.domain.User;
 import com.personal.user.core.service.UserAccountService;
 import com.personal.user.core.service.UserAuthService;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,12 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public TokenPair login(LoginRequest loginRequest) {
         User user = authenticate(loginRequest);
-        return tokenService.issueToken(user.getUserId());
+
+        Map<String, Object> claims = Map.of(
+                UserClaims.ROLE.getClaimName(), user.getRole()
+        );
+
+        return tokenService.issueToken(user.getUserId(), claims);
     }
 
     @Override
@@ -34,7 +43,15 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public TokenPair reissue(String refreshToken) {
         tokenService.validateRefreshToken(refreshToken);
-        return tokenService.reissueToken(refreshToken);
+
+        Long userId = tokenService.getUserIdFromRefreshToken(refreshToken);
+        User user = userAccountService.getUserByUserId(userId);
+
+        Map<String, Object> claims = Map.of(
+                UserClaims.ROLE.getClaimName(), user.getRole()
+        );
+
+        return tokenService.reissueToken(refreshToken, claims);
     }
 
     @Override
